@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuzuha</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-pink: #F4A7B9;
+            --primary-hover: #E87A90;
+            --accent-red: #D0104C;
+            --bg-dark: #121212;
+            --bg-card: #1E1E1E;
+            --text-gold: #d5a26f;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #0d0d0d;
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Selection styling */
+        ::selection {
+            color: #D0104C;
+            background: #F8C3CD;
+        }
+
+        /* Glassmorphism Navbar */
+        .navbar {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(15, 15, 15, 0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar.scrolled {
+            height: 64px;
+            background: rgba(181, 73, 91, 0.92);
+            border-bottom: 1px solid rgba(244, 167, 185, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Custom Animated Buttons */
+        .btn-custom {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.4s ease-in-out;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #F4A7B9, #E87A90, #D0104C);
+            background-size: 200% 200%;
+            color: #fff;
+            border: 1px solid #F4A7B9;
+            box-shadow: 0 4px 15px rgba(232, 122, 144, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            background-position: 100% 50%;
+            box-shadow: 0 0 20px #E87A90, 0 0 35px rgba(244, 167, 185, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary-custom {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #F4A7B9;
+            color: #F8C3CD;
+        }
+
+        .btn-secondary-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 150%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(232, 122, 144, 0.6), transparent);
+            clip-path: polygon(0 0, 100% 0, 65% 100%, 0% 100%);
+            transition: all 0.6s ease;
+            z-index: -1;
+        }
+
+        .btn-secondary-custom:hover {
+            color: #ffffff;
+            border-color: #E87A90;
+            box-shadow: 0 0 18px rgba(232, 122, 144, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary-custom:hover::before {
+            left: 100%;
+        }
+
+        /* Hero Parallax Banner */
+        .hero-banner {
+            position: relative;
+            background: linear-gradient(180deg, rgba(13,13,13,0.3) 0%, rgba(13,13,13,0.95) 100%),
+                        radial-gradient(circle at 50% 30%, rgba(208, 16, 76, 0.25), transparent 70%),
+                        url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Horizontal Carousel Drag Scroll Styling */
+        .carousel-container {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 1.5rem;
+        }
+
+        .carousel-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .carousel-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .carousel-container::-webkit-scrollbar-thumb {
+            background: #E87A90;
+            border-radius: 10px;
+        }
+
+        .carousel-card {
+            flex: 0 0 280px;
+            scroll-snap-align: start;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+            .carousel-card {
+                flex: 0 0 320px;
+            }
+        }
+
+        .carousel-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(232, 122, 144, 0.25);
+        }
+
+        /* Mobile Nav Drawer Transition */
+        .mobile-menu {
+            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            transform: translateX(100%);
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* Animated Hamburger Icon */
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active .line-1 {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active .line-2 {
+            opacity: 0;
+        }
+
+        .hamburger.active .line-3 {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="navbar fixed top-0 left-0 w-full z-50 h-20 flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
+        <!-- Brand Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-600 to-pink-400 p-0.5 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <img src="assets/images/common/logo3.png" alt="">
+            </div>
+            <div class="flex flex-col">
+                <span class="font-black text-xl tracking-widest text-white group-hover:text-pink-300 transition-colors">KUZUHA</span>
+                <span class="text-[10px] text-pink-300 tracking-widest font-light -mt-1">にじさんじ所属</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center space-x-1 lg:space-x-4">
+            <a href="#about" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">について</a>
+            <a href="#service" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">活動</a>
+            <a href="#reservation" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">詳しい</a>
+            <a href="#menu" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">アルバム</a>
+            <a href="#contact" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">本社所在地</a>
+            <!-- 追加桌面端的追加情報連結 -->
+            <a href="evaluation.html" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">追加情報</a>
+            
+            <a href="#subscribe" class="btn-custom btn-primary-custom text-xs ml-4">
+                <i class="fa-brands fa-youtube mr-2"></i>メンバー登録
+            </a>
+        </nav>
+
+        <!-- Mobile Hamburger Button -->
+        <button id="menu-toggle" class="hamburger md:hidden p-2 text-gray-300 hover:text-white focus:outline-none z-50" aria-label="Toggle Navigation Menu">
+            <div class="w-6 h-5 flex flex-col justify-between">
+                <span class="hamburger-line line-1 w-full h-0.5 bg-pink-300 rounded"></span>
+                <span class="hamburger-line line-2 w-full h-0.5 bg-pink-300 rounded"></span>
+                <span class="hamburger-line line-3 w-full h-0.5 bg-pink-300 rounded"></span>
+            </div>
+        </button>
+    </div>
+
+    <!-- Mobile Drawer Overlay Menu -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 bg-black/95 backdrop-blur-2xl z-40 flex flex-col justify-center items-center md:hidden px-6">
+        <div class="space-y-6 text-center w-full max-w-xs">
+            <a href="#about" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">について</a>
+            <a href="#service" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">活動</a>
+            <a href="#reservation" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">詳しい</a>
+            <a href="#menu" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">アルバム</a>
+            <a href="#contact" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">本社所在地</a>
+            <!-- 統一手機端的選單樣式與底線 -->
+            <a href="evaluation.html" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">追加情報</a>
+
+            <a href="#subscribe" class="mobile-nav-link btn-custom btn-primary-custom w-full text-base py-3 mt-4">
+                メンバー登録
+            </a>
+        </div>
+    </div>
+</header>
+
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section class="hero-banner min-h-[90vh] flex items-center justify-center relative px-4 py-20">
+            <div class="text-center max-w-4xl mx-auto z-10 flex flex-col items-center">
+                <div class="relative mb-8 group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-rose-600 rounded-full blur-xl opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                    <div class="relative w-44 h-44 sm:w-56 sm:h-56 p-6 sm:p-8 flex items-center justify-center">
+                        <img src="assets/images/common/logo1-01.png" alt="Logo" class="w-full h-full object-contain">
+                    </div>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white mb-6">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-rose-400 to-red-500 font-montserrat">Kuzuha</span>
+                </h1>
+                
+                <p class="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl font-light leading-relaxed mb-10 px-4">
+                    魔界からやってきたニート吸血鬼 。<br>
+                    ゲーム配信を中心に絶大な人気を誇るVTuber。<br>
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto px-6">
+                    <a href="https://www.youtube.com/@Kuzuha" class="btn-custom btn-primary-custom w-full sm:w-auto text-base" target="_blank" rel="noopener noreferrer">
+                        参加しませんか
+                    </a>
+                    <a href="https://x.com/Vamp_Kuzu" class="btn-custom btn-secondary-custom w-full sm:w-auto text-base" target="_blank" rel="noopener noreferrer">
+                        クリックへようこそ
+                    </a>
+                </div>
+            </div>
+            
+            <a href="#about" class="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-pink-300/60 hover:text-pink-300 transition-colors animate-bounce">
+                <i class="fa-solid fa-chevron-down text-2xl"></i>
+            </a>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 sm:py-28 bg-neutral-900 border-t border-neutral-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                    <div class="space-y-6">
+                        <div class="inline-flex items-center gap-2 text-pink-400 text-sm font-semibold tracking-wider uppercase">
+                            <span class="w-8 h-0.5 bg-pink-400"></span> PROFILE
+                        </div>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">葛葉 Kuzuha</h2>
+                        <p class="text-gray-300 text-base sm:text-lg leading-relaxed space-y-4">
+                            魔界での名はアレクサンドル・ラグーザ。愛称はサーシャ。<br>
+                            魔界から家族と共に移住してきた吸血鬼。<br>
+                            幼少期の葛葉は教育係から逃げ回っていた為、家族が改めて色々な事を学べるよう強制的に行った。<br>
+                            大金持ちと結婚する為に始めた配信業も忙しく、不本意だがニートとは呼べない生活を送っている。
+                        </p>
+                        <div class="pt-4">
+                            <a href="#reservation" class="btn-custom btn-primary-custom text-sm">
+                                ストーリーの詳細
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <div class="absolute -inset-2 bg-gradient-to-r from-pink-500 to-rose-700 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+                        <div class="relative aspect-video sm:aspect-4/3 rounded-2xl overflow-hidden bg-neutral-800 border border-neutral-700 shadow-2xl">
+                            <img src="assets/images/bg/bg001.jpg" alt="葛葉 Kuzuha" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Section -->
+        <section id="service" class="py-20 sm:py-28 bg-gradient-to-b from-rose-950/40 via-neutral-900 to-neutral-900 border-t border-neutral-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-5xl font-extrabold text-white mb-4">活動家グループ</h2>
+                    <p class="text-gray-300 text-base sm:text-lg leading-relaxed">
+                        このセクションでは、葛葉が普段参加しているグループを紹介します。<br class="hidden sm:inline">しかし、彼はゲーマーだ。
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-neutral-800/80 rounded-xl border border-neutral-700/60 overflow-hidden shadow-xl hover:border-pink-500/50 transition-all duration-300 flex flex-col">
+                        <div class="aspect-video w-full bg-neutral-700 relative overflow-hidden">
+                            <img src="assets/images/products/002.jpg" alt="Gamers" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">Gamers</h3>
+                                <h4 class="text-xs font-semibold text-pink-400 mb-4 tracking-wider uppercase">グループデビュー</h4>
+                                <p class="text-gray-300 text-sm leading-relaxed mb-6">
+                                    彼らは2019年ににじさんじ傘下のGamersというグループとしてデビューし、活動を開始した。
+                                </p>
+                            </div>
+                            <a href="#menu" class="btn-custom btn-secondary-custom w-full text-xs text-center">続きを読む</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-neutral-800/80 rounded-xl border border-neutral-700/60 overflow-hidden shadow-xl hover:border-pink-500/50 transition-all duration-300 flex flex-col">
+                        <div class="aspect-video w-full bg-neutral-700 relative overflow-hidden">
+                            <img src="assets/images/products/003.jpg" alt="葛葉 Kuzuha" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">葛葉Kuzuha</h3>
+                                <h4 class="text-xs font-semibold text-pink-400 mb-4 tracking-wider uppercase">元々は個人の力だったものが、今や企業の力となった。</h4>
+                                <p class="text-gray-300 text-sm leading-relaxed mb-6">
+                                    彼は主にゲーム配信を行っており、あらゆるジャンルのゲームに精通している。日本国内だけでなく世界中に多くのファンがいる。
+                                </p>
+                            </div>
+                            <a href="#menu" class="btn-custom btn-secondary-custom w-full text-xs text-center">続きを読む</a>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-neutral-800/80 rounded-xl border border-neutral-700/60 overflow-hidden shadow-xl hover:border-pink-500/50 transition-all duration-300 flex flex-col md:col-span-2 lg:col-span-1">
+                        <div class="aspect-video w-full bg-neutral-700 relative overflow-hidden">
+                            <img src="assets/images/products/004.jpg" alt="ChroNoiR" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-1">ChroNoiR</h3>
+                                <h4 class="text-xs font-semibold text-pink-400 mb-4 tracking-wider uppercase">同時期にデビューした別の男性と結成したグループ</h4>
+                                <p class="text-gray-300 text-sm leading-relaxed mb-6">
+                                    「普段は仲良くコミカルにイジり合っている男友達なのに、歌うと最高にカッコよくなる最強の2人組」です！
+                                </p>
+                            </div>
+                            <a href="#menu" class="btn-custom btn-secondary-custom w-full text-xs text-center">続きを読む</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reservation Section -->
+        <section id="reservation" class="py-20 sm:py-28 relative bg-gradient-to-r from-red-950 via-neutral-900 to-rose-950 border-t border-neutral-800 overflow-hidden">
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-xs"></div>
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-white mb-6">もっと詳しく知る</h2>
+                <p class="text-gray-200 text-base sm:text-xl font-light mb-10 leading-relaxed">
+                    この伝説的な男性VTuberとその物語についてもっと知りたいですか？
+                </p>
+                <a href="https://www.youtube.com/@Kuzuha" target="_blank" rel="noopener noreferrer" class="btn-custom btn-primary-custom text-base sm:text-lg px-8 py-3">
+                    詳しくはこちらをクリックしてください <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section id="menu" class="py-20 sm:py-28 bg-neutral-950 border-t border-neutral-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="menu-list js-fadeInUp mb-12">
+                    <div class="title-bar flex flex-col md:flex-row md:items-end justify-between border-b border-neutral-800 pb-6">
+                        <div>
+                            <h3 class="title text-pink-400 font-semibold text-lg tracking-wider mb-2">ソロ曲もグループ曲も</h3>
+                            <h2 class="text-3xl sm:text-5xl font-extrabold text-white mb-4">アルバム</h2>
+                            <p class="text-gray-400 text-sm sm:text-base">
+                                この伝説的なカバーアーティスト、オリジナルアーティスト、そしてグループアーティストの全楽曲をぜひお聴きください！
+                            </p>
+                        </div>
+                        <div class="mt-6 md:mt-0 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <span class="text-xs text-pink-400 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-heart"></i> 左右にスワイプできます
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-container">
+                    <!-- Song 1 -->
+                    <div class="carousel-card bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="aspect-square w-full bg-neutral-800 rounded-lg overflow-hidden mb-4 relative group">
+                            <img src="assets/images/products/005.jpg" alt="Casino" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">Casino</h3>
+                            <p class="text-xs font-semibold text-pink-400">KUZUHA</p>
+                        </div>
+                    </div>
+
+                    <!-- Song 2 -->
+                    <div class="carousel-card bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="aspect-square w-full bg-neutral-800 rounded-lg overflow-hidden mb-4 relative group">
+                            <img src="assets/images/products/006.jpg" alt="ファイトソング" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">ファイトソング</h3>
+                            <p class="text-xs font-semibold text-pink-400">KUZUHA</p>
+                        </div>
+                    </div>
+
+                    <!-- Song 3 -->
+                    <div class="carousel-card bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="aspect-square w-full bg-neutral-800 rounded-lg overflow-hidden mb-4 relative group">
+                            <img src="assets/images/products/007.jpg" alt="KING" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">KING</h3>
+                            <p class="text-xs font-semibold text-pink-400">KUZUHA</p>
+                        </div>
+                    </div>
+
+                    <!-- Song 4 -->
+                    <div class="carousel-card bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="aspect-square w-full bg-neutral-800 rounded-lg overflow-hidden mb-4 relative group">
+                            <img src="assets/images/products/008.jpg" alt="Stormy" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">Stormy</h3>
+                            <p class="text-xs font-semibold text-pink-400">ChroNoiR</p>
+                        </div>
+                    </div>
+
+                    <!-- Song 5 -->
+                    <div class="carousel-card bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col justify-between">
+                        <div class="aspect-square w-full bg-neutral-800 rounded-lg overflow-hidden mb-4 relative group">
+                            <img src="assets/images/products/009.jpg" alt="Twilight" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">Twilight</h3>
+                            <p class="text-xs font-semibold text-pink-400">ChroNoiR</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 sm:py-28 bg-neutral-900 border-t border-neutral-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-5xl font-extrabold text-white mb-4">にじさんじ</h2>
+                    <p class="text-gray-300 text-base sm:text-lg">
+                        にじさんじは、株式会社ANYCOLORが運営するバーチャルユーチューバー事務所です
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-8 bg-neutral-800/50 p-6 sm:p-8 rounded-2xl border border-neutral-700/50">
+                        <div>
+                            <h3 class="text-pink-400 font-bold text-lg mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-phone text-sm"></i> 連絡先番号 & 会社コード
+                            </h3>
+                            <p class="text-gray-200 text-base sm:text-lg">
+                                <a href="tel:+81343354850" class="hover:text-pink-300 transition-colors">+81 3 4335 4850</a>
+                                <span class="mx-2 text-gray-500">/</span>
+                                <span class="text-pink-300 font-mono">5032.T</span>
+                            </p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-pink-400 font-bold text-lg mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-location-dot text-sm"></i> 本社所在地
+                            </h3>
+                            <p class="text-gray-200 text-base sm:text-lg leading-relaxed">
+                                東京都港区赤坂9丁目7番2号
+                            </p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-pink-400 font-bold text-lg mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-clock text-sm"></i> 営業時間
+                            </h3>
+                            <p class="text-gray-200 text-base sm:text-lg">
+                                平日 11:00～22:00 / 休日 10:30～22:00
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="w-full rounded-2xl overflow-hidden border border-neutral-700 shadow-2xl aspect-video lg:aspect-square">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1922.4955396159223!2d139.7299593888941!3d35.66612872225206!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188b789709cb65%3A0xe977258f4bc349!2zOS1jaMWNbWUtNyBBaQueueLCBNaW5hdG8gQ2l0eSwgVG9reW8gMTA3LTAwNTLml6XmnKw!5e0!3m2!1sja!2sjp!4v1782567811471!5m2!1sja!2sjp" 
+                            class="w-full h-full border-0" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="subscribe" class="bg-black text-white border-t border-neutral-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl sm:text-4xl font-extrabold mb-3">サブスクリプション</h2>
+                <p class="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                    メンバーになると、メンバー限定のライブ配信に参加したり、配信者についてより詳しく知ることができます！
+                </p>
+            </div>
+
+            <form class="space-y-4 max-w-md mx-auto" onsubmit="event.preventDefault(); alert('登録ありがとうございます！');">
+                <div>
+                    <label for="name" class="block text-xs font-semibold text-gray-300 uppercase mb-1">名前</label>
+                    <input type="text" id="name" required class="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-pink-400 transition-colors" placeholder="お名前を入力してください">
+                </div>
+                <div>
+                    <label for="email" class="block text-xs font-semibold text-gray-300 uppercase mb-1">電子メール</label>
+                    <input type="email" id="email" required class="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-pink-400 transition-colors" placeholder="example@mail.com">
+                </div>
+                <button type="submit" class="btn-custom btn-primary-custom w-full py-3.5 text-base font-bold mt-2">
+                    送り出す
+                </button>
+            </form>
+        </div>
+
+        <div class="border-t border-neutral-900 bg-neutral-950 py-6 text-center text-xs text-gray-500">
+            <p>© Copyright 2026 Kuzuha Fanclub All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        function toggleMenu() {
+            menuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        menuToggle.addEventListener('click', toggleMenu);
+
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('open')) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>追加情報 - Kuzuha</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-pink: #F4A7B9;
+            --primary-hover: #E87A90;
+            --accent-red: #D0104C;
+            --bg-dark: #121212;
+            --bg-card: #1E1E1E;
+            --text-gold: #d5a26f;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #0d0d0d;
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Selection styling */
+        ::selection {
+            color: #D0104C;
+            background: #F8C3CD;
+        }
+
+        /* Glassmorphism Navbar */
+        .navbar {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(15, 15, 15, 0.75);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar.scrolled {
+            height: 64px;
+            background: rgba(181, 73, 91, 0.92);
+            border-bottom: 1px solid rgba(244, 167, 185, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Custom Animated Buttons */
+        .btn-custom {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 6px;
+            overflow: hidden;
+            transition: all 0.4s ease-in-out;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #F4A7B9, #E87A90, #D0104C);
+            background-size: 200% 200%;
+            color: #fff;
+            border: 1px solid #F4A7B9;
+            box-shadow: 0 4px 15px rgba(232, 122, 144, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            background-position: 100% 50%;
+            box-shadow: 0 0 20px #E87A90, 0 0 35px rgba(244, 167, 185, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* Mobile Nav Drawer Transition */
+        .mobile-menu {
+            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            transform: translateX(100%);
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* Animated Hamburger Icon */
+        .hamburger-line {
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active .line-1 {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active .line-2 {
+            opacity: 0;
+        }
+
+        .hamburger.active .line-3 {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- Header Navigation -->
+    <header id="header" class="navbar fixed top-0 left-0 w-full z-50 h-20 flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-600 to-pink-400 p-0.5 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                    <img src="assets/images/common/logo3.png" alt="Logo">
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-black text-xl tracking-widest text-white group-hover:text-pink-300 transition-colors">KUZUHA</span>
+                    <span class="text-[10px] text-pink-300 tracking-widest font-light -mt-1">にじさんじ所属</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-4">
+                <a href="index.html#about" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">について</a>
+                <a href="index.html#service" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">活動</a>
+                <a href="index.html#reservation" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">詳しい</a>
+                <a href="index.html#menu" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">アルバム</a>
+                <a href="index.html#contact" class="px-3 py-2 text-sm font-medium text-gray-200 hover:text-pink-300 transition-colors">本社所在地</a>
+                <a href="evaluation.html" class="px-3 py-2 text-sm font-medium text-pink-400 font-bold border-b-2 border-pink-400 transition-colors">追加情報</a>
+                
+                <a href="#subscribe" class="btn-custom btn-primary-custom text-xs ml-4">
+                    <i class="fa-brands fa-youtube mr-2"></i>メンバー登録
+                </a>
+            </nav>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="menu-toggle" class="hamburger md:hidden p-2 text-gray-300 hover:text-white focus:outline-none z-50" aria-label="Toggle Navigation Menu">
+                <div class="w-6 h-5 flex flex-col justify-between">
+                    <span class="hamburger-line line-1 w-full h-0.5 bg-pink-300 rounded"></span>
+                    <span class="hamburger-line line-2 w-full h-0.5 bg-pink-300 rounded"></span>
+                    <span class="hamburger-line line-3 w-full h-0.5 bg-pink-300 rounded"></span>
+                </div>
+            </button>
+        </div>
+
+        <!-- Mobile Drawer Overlay Menu -->
+        <div id="mobile-menu" class="mobile-menu fixed inset-0 bg-black/95 backdrop-blur-2xl z-40 flex flex-col justify-center items-center md:hidden px-6">
+            <div class="space-y-6 text-center w-full max-w-xs">
+                <a href="index.html#about" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">について</a>
+                <a href="index.html#service" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">活動</a>
+                <a href="index.html#reservation" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">詳しい</a>
+                <a href="index.html#menu" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">アルバム</a>
+                <a href="index.html#contact" class="mobile-nav-link block text-xl font-medium text-gray-200 hover:text-pink-400 transition-colors py-2 border-b border-gray-800">本社所在地</a>
+                <a href="evaluation.html" class="mobile-nav-link block text-xl font-medium text-pink-400 transition-colors py-2 border-b border-gray-800">追加情報</a>
+
+                <a href="#subscribe" class="mobile-nav-link btn-custom btn-primary-custom w-full text-base py-3 mt-4">
+                    メンバー登録
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-20 flex-grow">
+        <!-- Banner Title Section -->
+        <section class="relative py-16 sm:py-24 bg-gradient-to-b from-rose-950/40 via-neutral-900 to-neutral-900 border-b border-neutral-800 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-rose-400 to-red-500">追加情報</span>
+                </h1>
+                <p class="text-gray-300 text-base sm:text-xl font-light max-w-2xl mx-auto">
+                    それでは、この配信者の輝かしい功績を見ていきましょう。
+                </p>
+            </div>
+        </section>
+
+        <!-- Evaluation Grid Section -->
+        <section class="py-16 sm:py-24 bg-neutral-950">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- 網格佈局 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Card 1 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <!-- 使用 aspect-[4/3] 保持標準長方形照片比例 -->
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/001.jpg" alt="100万人突破" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">世界で初めて登録者数100万人を達成した男性VTuber</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/002.jpg" alt="200万人突破" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">彼は、日本で初めて登録者数200万人を突破した男性バーチャルユーチューバーであり、世界で2番目に登録者数200万人を達成した男性VTuberである。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/003.jpg" alt="KING" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">カバー曲「KING」はYouTubeで5876万回再生されている。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/004.jpg" alt="eスポーツ交流" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">彼は数々のeスポーツ招待トーナメントに参加し、優勝経験もあるため、日本のVTuberコミュニティとeスポーツコミュニティ間の交流を促進する上で重要な人物である。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/005.jpg" alt="スパチャ" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">同チャンネルは、世界のYouTubeチャンネルの年間スポンサーシップ（スーパーチャット）支出ランキングで何度もトップ10入りを果たしており、非常に熱心で活発なファン層を抱えている。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/006.jpg" alt="武道館ライブ" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">2024年5月、彼らは日本の音楽家にとっての聖地である日本武道館で、初の対面式ライブコンサートを成功裏に開催した。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 7 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/007.jpg" alt="メジャーデビュー" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">2021年、彼らはユニバーサルミュージックジャパンを通じてメジャーデビューを発表し、2022年には初のミニアルバム「Sweet Bite」をリリースし、非常に高い評価を得た。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 8 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/008.jpg" alt="不眠の吸血鬼" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">彼はゲーム実況を10時間以上、時には徹夜で配信することが多い。彼のファンは（冗談交じりに彼を「不眠の吸血鬼」と呼ぶことが多い）、彼の話し方は日本の若い世代のインターネットスラングに大きな影響を与えている。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 9 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/009.jpg" alt="CRカップ" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">彼はかつてCRカップで優勝した経験があり、冷静な采配と重要な局面での爆発的なシュートは、プロ選手たちから高い評価を得ている。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 10 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/010.jpg" alt="スマブラ" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">2018年ににじさんじが主催した「大乱闘スマッシュブラザーズ」トーナメントにおいて、和成は卓越したスキルと心理戦を駆使し、あらゆる障害を乗り越えて初代チャンピオンの座を獲得した。この大会をきっかけに彼の人気は急上昇し、にじさんじの「ゲーム界の強豪」としての地位を確固たるものにした。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 11 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/011.jpg" alt="Scarlet Invitation" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">2021年Zepp Hanedaが初のオフライン単独イベント＆コンサート「Scarlet Invitation」を開催し、チケットは即完売となった。ステージ上では、普段のライブ配信での怠惰で傲慢なイメージとは全く異なる、クールでスタイリッシュな歌とダンスを披露し、多くのファンを魅了した。</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 12 -->
+                    <div class="bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-xl hover:border-pink-500/50 hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                        <div class="aspect-[4/3] w-full bg-neutral-800 overflow-hidden">
+                            <img src="assets/images/evaluation/012.jpg" alt="ギャップ魅力" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6 flex-1 flex items-center">
+                            <p class="text-gray-300 text-sm sm:text-base leading-relaxed">高潔な吸血鬼として描かれているにもかかわらず、葛葉はしばしば小学生のような性格を見せる。野菜（特にピーマン）が嫌いで、ジャンクフードが大好き、褒められると恥ずかしがってどもってしまう。普段は「何の役にも立たないが、ゲームや歌を歌う時は天才」というこのギャップこそが、彼の最大の魅力なのだ。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="subscribe" class="bg-black text-white border-t border-neutral-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <div class="text-center mb-10">
+                <h2 class="text-2xl sm:text-4xl font-extrabold mb-3">サブスクリプション</h2>
+                <p class="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+                    メンバーになると、メンバー限定のライブ配信に参加したり、配信者についてより詳しく知ることができます！
+                </p>
+            </div>
+
+            <!-- Mobile Optimized Form -->
+            <form class="space-y-4 max-w-md mx-auto" onsubmit="event.preventDefault(); alert('登録ありがとうございます！');">
+                <div>
+                    <label for="name" class="block text-xs font-semibold text-gray-300 uppercase mb-1">名前</label>
+                    <input type="text" id="name" required class="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-pink-400 transition-colors" placeholder="お名前を入力してください">
+                </div>
+                <div>
+                    <label for="email" class="block text-xs font-semibold text-gray-300 uppercase mb-1">電子メール</label>
+                    <input type="email" id="email" required class="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-pink-400 transition-colors" placeholder="example@mail.com">
+                </div>
+                <button type="submit" class="btn-custom btn-primary-custom w-full py-3.5 text-base font-bold mt-2">
+                    送り出す
+                </button>
+            </form>
+        </div>
+
+        <!-- Copyright Banner -->
+        <div class="border-t border-neutral-900 bg-neutral-950 py-6 text-center text-xs text-gray-500">
+            <p>© Copyright 2026 Kuzuha Fanclub All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile Navigation Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        function toggleMenu() {
+            menuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        menuToggle.addEventListener('click', toggleMenu);
+
+        // Close mobile drawer when clicking menu items
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('open')) {
+                    toggleMenu();
+                }
+            });
+        });
+
+        // Navbar Scroll Effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
